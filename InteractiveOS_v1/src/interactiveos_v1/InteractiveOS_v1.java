@@ -214,13 +214,14 @@ public class InteractiveOS_v1 extends Application {
         load.setMinWidth(btnWidth);
         load.setOnAction((ActionEvent event) -> {
             FileChooser browser = new FileChooser();
-            browser.getExtensionFilters().add(new ExtensionFilter("Tekstiniai programos failai", "*.txt"));
+            browser.setInitialDirectory(new File(System.getProperty("user.dir")));
             File sourceCode = browser.showOpenDialog(primaryStage);
             if (sourceCode == null){
                 return;
             }
             consoleOutputText.setText(sourceCode.toString());
             // load program
+            vm.loadProgram(sourceCode);
         });
         
         controlButtons.getChildren().add(run);
