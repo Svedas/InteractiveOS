@@ -129,7 +129,7 @@ public class VirtualMachine {
 //                throw new IOException("not implemented");
 
         }
-            
+        cpu.setIC(++currentCommandIC);
         
     }
 }
