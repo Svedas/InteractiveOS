@@ -77,22 +77,23 @@ public class VirtualMachine {
             br = new BufferedReader(new FileReader(file));
             String line;
             while ((line = br.readLine()) != null){
-            if (line.length() > 4)
-                throw new IOException("Bad input");
-            
-            if(line.charAt(0) == '$')
-            {
-                block = Integer.parseInt("" + line.charAt(1));         // rodo bloka
-                word = Integer.parseInt("" + line.charAt(2));         // rodo word
-                // galima patikrint kad nevirsija 16 abu, bet i guess fuck it, runtime error lol
-            }
-            
-            memory[block][word].setValue(line);
-            ++word;
-            if (word == 16){
-                word = 0;
-                ++block;
-            }
+                if (line.length() > 4)
+                    throw new IOException("Bad input");
+
+                if(line.charAt(0) == '$')
+                {
+                    block = Integer.parseInt("" + line.charAt(1));         // rodo bloka
+                    word = Integer.parseInt("" + line.charAt(2));         // rodo word
+                    continue;
+                    // galima patikrint kad nevirsija 16 abu, bet i guess fuck it, runtime error lol
+                }
+
+                memory[block][word].setValue(line);
+                ++word;
+                if (word == 16){
+                    word = 0;
+                    ++block;
+                }
             }
             
         } catch (FileNotFoundException ex) {
@@ -106,6 +107,29 @@ public class VirtualMachine {
                 Logger.getLogger(VirtualMachine.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        
+    }
+    public void executeStep() throws IOException
+    {
+
+        int currentCommandIC = Integer.parseInt(cpu.icProperty().get());
+        int ICWord = currentCommandIC % 16;
+        int ICBlock = currentCommandIC / 16;
+        SimpleStringProperty currentCommand = memory[ICBlock][ICWord];
+        
+        switch(currentCommand.get().substring(0,2))
+        {
+            case "RD":
+                int x = Integer.parseInt("" + currentCommand.get().charAt(2));
+                int y = Integer.parseInt("" + currentCommand.get().charAt(3));
+                int value = Integer.parseInt("" + memory[x][y].get());
+                cpu.setR1(value);
+                break;
+            default:
+//                throw new IOException("not implemented");
+
+        }
+            
         
     }
 }

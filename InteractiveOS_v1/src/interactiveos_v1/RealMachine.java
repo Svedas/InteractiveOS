@@ -51,7 +51,7 @@ public class RealMachine {
         int blockCounter = 0;
         while (blockCounter < 16){
             boolean validBlock = true;
-            int block = new Random().nextInt(memSize) + 1; //Skips block nr 0
+            int block = new Random().nextInt(memSize-1) + 1; //Skips block nr 0
             for (String b : pt){
                 if (Integer.parseInt(b, 16) == block){
                     validBlock = false;

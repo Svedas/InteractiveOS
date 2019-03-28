@@ -6,6 +6,9 @@
 package interactiveos_v1;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
@@ -197,6 +200,11 @@ public class InteractiveOS_v1 extends Application {
         step.setOnAction((ActionEvent event) -> {
             // step program
             consoleOutputText.setText("Step");
+            try {
+                vm.executeStep();
+            } catch (IOException ex) {
+                Logger.getLogger(InteractiveOS_v1.class.getName()).log(Level.SEVERE, null, ex);
+            }
         });
         
         Button reset = new Button("Reset");
