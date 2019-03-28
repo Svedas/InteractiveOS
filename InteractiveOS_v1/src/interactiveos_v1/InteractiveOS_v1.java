@@ -168,14 +168,20 @@ public class InteractiveOS_v1 extends Application {
         vmCpuGrid.add(vmSf, 1, 4);
         
         //Column constraints
-        for (int i = 0; i < 2; i++){
-            ColumnConstraints columnConstr = new ColumnConstraints();
-            columnConstr.setMinWidth(48);
-            columnConstr.setMaxWidth(48);
-            columnConstr.setHalignment(HPos.CENTER);
-            rmCpuGrid.getColumnConstraints().add(columnConstr);
-            vmCpuGrid.getColumnConstraints().add(columnConstr);
-        }
+        //for (int i = 0; i < 2; i++){
+        ColumnConstraints columnConstr1 = new ColumnConstraints();
+        columnConstr1.setMinWidth(48);
+        columnConstr1.setMaxWidth(48);
+        columnConstr1.setHalignment(HPos.CENTER);
+        rmCpuGrid.getColumnConstraints().add(columnConstr1);
+        vmCpuGrid.getColumnConstraints().add(columnConstr1);
+        columnConstr1 = new ColumnConstraints();
+        columnConstr1.setMinWidth(96);
+        columnConstr1.setMaxWidth(96);
+        columnConstr1.setHalignment(HPos.CENTER);
+        rmCpuGrid.getColumnConstraints().add(columnConstr1);
+        vmCpuGrid.getColumnConstraints().add(columnConstr1);
+        //}
 
         ////////////////////////////////////////////////////////////////////////
         
@@ -406,6 +412,6 @@ public class InteractiveOS_v1 extends Application {
         Scene scene = new Scene(root, windowX, windowY);
         primaryStage.setScene(scene);
         primaryStage.setResizable(true);
-        primaryStage.show();
+        primaryStage.show();     
     }
 }

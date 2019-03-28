@@ -28,21 +28,21 @@ public class VmCpu {
     }
     
     public void setR1(int value){
-        R1.setValue(addZeroBytes(value,4) + Integer.toHexString(value).toUpperCase());
+        R1.setValue(addZeroHex(value,4) + Integer.toHexString(value).toUpperCase());
     }
     public void setR2(int value){
-        R2.setValue(addZeroBytes(value,4) + Integer.toHexString(value).toUpperCase());
+        R2.setValue(addZeroHex(value,4) + Integer.toHexString(value).toUpperCase());
     }
     public void setFHR(int value){
-        R3.setValue(addZeroBytes(value,4) + Integer.toHexString(value).toUpperCase());
+        R3.setValue(addZeroHex(value,4) + Integer.toHexString(value).toUpperCase());
     }
     
     public void setIC(int value){
-        IC.setValue(addZeroBytes(value,2) + Integer.toHexString(value).toUpperCase());
+        IC.setValue(addZeroHex(value,2) + Integer.toHexString(value).toUpperCase());
     }
     
     public void setSF(int value){
-        SF.setValue(addZeroBytes(value,2) + Integer.toHexString(value).toUpperCase());
+        SF.setValue(addZeroHex(value,2) + Integer.toHexString(value).toUpperCase());
     }
     
     ////////////////////////////////////////////////////////////////////////////
@@ -67,9 +67,24 @@ public class VmCpu {
         return SF;
     } 
     
-    public String addZeroBytes(int value, int bytes){
-        value *= Math.pow(16, 4-bytes);
+    public String addZeroHex(int value, int bytes){
         String zeroBytes = "";
+        if(value == 0){
+            for(int i = 0; i < bytes*2-1; i++){
+                zeroBytes += "0";
+            }
+            return zeroBytes;
+        }
+        value *= Math.pow(16, 8-(bytes*2));
+        //zeroBytes += "0";
+        if(value < 268435456)
+            zeroBytes += "0";
+        if(value < 16777216)
+            zeroBytes += "0";
+        if(value < 1048576)
+            zeroBytes += "0";
+        if(value < 65536)
+            zeroBytes += "0";
         if(value < 4096)
             zeroBytes += "0";
         if(value < 256)
