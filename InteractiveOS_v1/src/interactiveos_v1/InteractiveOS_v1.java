@@ -18,7 +18,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -40,19 +39,15 @@ public class InteractiveOS_v1 extends Application {
         //Root pane
         BorderPane root = new BorderPane();
         
-        //RM memory
+        //Real Mashine
         RealMachine rm = new RealMachine();
-        //RM CPU
-        RmCpu rmcpu = new RmCpu();
         
-        //VM memory
-        VirtualMachine vm = new VirtualMachine();
-        //VM CPU
-        VmCpu vmcpu = new VmCpu();
+        //Virtual Machine
+        VirtualMachine vm = new VirtualMachine();     
  
         //OS startup
         System.out.println("OS loading");
-        //rm.loadVirtualMachine(rcpu, vm);
+        rm.startVirtualMachine(vm);
         
 ////////////////////////////////////////////////////////////////////////////////
         //********************************************************************//
@@ -73,67 +68,67 @@ public class InteractiveOS_v1 extends Application {
         
         rmCpuGrid.add(new Label("PTR"), 0, 0);
         Label ptr = new Label("x");
-        ptr.textProperty().bind(rmcpu.ptrProperty());
+        ptr.textProperty().bind(rm.cpu.ptrProperty());
         rmCpuGrid.add(ptr, 1, 0);
         
         rmCpuGrid.add(new Label("R1"), 0, 1);
         Label r1 = new Label("x");
-        r1.textProperty().bind(vmcpu.r1Property()); //RM or VM?
+        r1.textProperty().bind(vm.cpu.r1Property()); //RM or VM?
         rmCpuGrid.add(r1, 1, 1);
         
         rmCpuGrid.add(new Label("R2"), 0, 2);
         Label r2 = new Label("x");
-        r2.textProperty().bind(vmcpu.r2Property());
+        r2.textProperty().bind(vm.cpu.r2Property());
         rmCpuGrid.add(r2, 1, 2);
         
         rmCpuGrid.add(new Label("R3"), 0, 3);
         Label r3 = new Label("x");
-        r3.textProperty().bind(vmcpu.r3Property());
+        r3.textProperty().bind(vm.cpu.r3Property());
         rmCpuGrid.add(r3, 1, 3);
         
         rmCpuGrid.add(new Label("IC"), 0, 4);
         Label ic = new Label("x");
-        ic.textProperty().bind(vmcpu.icProperty());
+        ic.textProperty().bind(vm.cpu.icProperty());
         rmCpuGrid.add(ic, 1, 4);
         
         rmCpuGrid.add(new Label("MODE"), 0, 5);
         Label mode = new Label("x");
-        mode.textProperty().bind(rmcpu.modeProperty());
+        mode.textProperty().bind(rm.cpu.modeProperty());
         rmCpuGrid.add(mode, 1, 5);
         
         rmCpuGrid.add(new Label("SF"), 0, 6);
         Label sf = new Label("x");
-        sf.textProperty().bind(rmcpu.ptrProperty());
+        sf.textProperty().bind(vm.cpu.sfProperty());
         rmCpuGrid.add(sf, 1, 6);
         
         rmCpuGrid.add(new Label("TI"), 0, 7);
         Label ti = new Label("x");
-        ti.textProperty().bind(rmcpu.ptrProperty());
+        ti.textProperty().bind(rm.cpu.tiProperty());
         rmCpuGrid.add(ti, 1, 7);
         
         rmCpuGrid.add(new Label("SI"), 0, 8);
         Label si = new Label("x");
-        si.textProperty().bind(rmcpu.ptrProperty());
+        si.textProperty().bind(rm.cpu.siProperty());
         rmCpuGrid.add(si, 1, 8);
         
         rmCpuGrid.add(new Label("PI"), 0, 9);
         Label pi = new Label("x");
-        pi.textProperty().bind(rmcpu.ptrProperty());
+        pi.textProperty().bind(rm.cpu.piProperty());
         rmCpuGrid.add(pi, 1, 9);
         
         rmCpuGrid.add(new Label("CH1"), 0, 10);
         Label ch1 = new Label("x");
-        ch1.textProperty().bind(rmcpu.ptrProperty());
+        ch1.textProperty().bind(rm.cpu.ch1Property());
         rmCpuGrid.add(ch1, 1, 10);
         
         rmCpuGrid.add(new Label("CH2"), 0, 11);
         Label ch2 = new Label("x");
-        ch2.textProperty().bind(rmcpu.ptrProperty());
+        ch2.textProperty().bind(rm.cpu.ch2Property());
         rmCpuGrid.add(ch2, 1, 11);
         
         rmCpuGrid.add(new Label("CH3"), 0, 12);
         Label ch3 = new Label("x");
-        ch3.textProperty().bind(rmcpu.ptrProperty());
+        ch3.textProperty().bind(rm.cpu.ch3Property());
         rmCpuGrid.add(ch3, 1, 12);
         
         //VM CPU label
@@ -146,27 +141,27 @@ public class InteractiveOS_v1 extends Application {
         
         vmCpuGrid.add(new Label("R1"), 0, 0);
         Label vmR1 = new Label("x");
-        vmR1.textProperty().bind(vmcpu.r1Property());
+        vmR1.textProperty().bind(vm.cpu.r1Property());
         vmCpuGrid.add(vmR1, 1, 0);
         
         vmCpuGrid.add(new Label("R2"), 0, 1);
         Label vmR2 = new Label("x");
-        vmR2.textProperty().bind(vmcpu.r2Property());
+        vmR2.textProperty().bind(vm.cpu.r2Property());
         vmCpuGrid.add(vmR2, 1, 1);
         
         vmCpuGrid.add(new Label("FHR"), 0, 2);
         Label vmR3 = new Label("x");
-        vmR3.textProperty().bind(vmcpu.r3Property());
+        vmR3.textProperty().bind(vm.cpu.r3Property());
         vmCpuGrid.add(vmR3, 1, 2);
         
         vmCpuGrid.add(new Label("IC"), 0, 3);
         Label vmIc = new Label("x");
-        vmIc.textProperty().bind(vmcpu.icProperty());
+        vmIc.textProperty().bind(vm.cpu.icProperty());
         vmCpuGrid.add(vmIc, 1, 3);
         
         vmCpuGrid.add(new Label("SF"), 0, 4);
         Label vmSf = new Label("x");
-        vmSf.textProperty().bind(vmcpu.sfProperty());
+        vmSf.textProperty().bind(vm.cpu.sfProperty());
         vmCpuGrid.add(vmSf, 1, 4);
         
         //Column constraints
@@ -271,15 +266,15 @@ public class InteractiveOS_v1 extends Application {
         rmMemGrid.gridLinesVisibleProperty().setValue(Boolean.TRUE);
         
         //RM words
-        for (int block = 0; block < 16*3; block++){
+        for (int block = 0; block < 16*5; block++){
             //Block number
             Label blockNum = new Label(Integer.toHexString(block).toUpperCase());
             blockNum.setTextFill(Color.NAVY);
             rmMemGrid.add(blockNum, 0, block);
             
             for (int word = 0; word < 16; word++){
-                Label temp = new Label("0000");
-                //temp.textProperty().bind(rm.memoryProperty(block, word));
+                Label temp = new Label("0");
+                temp.textProperty().bind(rm.memoryProperty(block, word));
                 rmMemGrid.add(temp, 1+word, block);
             }            
         }
@@ -310,8 +305,8 @@ public class InteractiveOS_v1 extends Application {
             vmMemGrid.add(blockNum, 0, block);
             
             for (int word = 0; word < 16; word++){
-                Label temp = new Label("0000");  
-                //temp.textProperty().bind(vm.memoryProperty(block, word));
+                Label temp = new Label("0");  
+                temp.textProperty().bind(vm.memoryProperty(block, word));
                 vmMemGrid.add(temp, 1+word, block);
             } 
         }
@@ -395,13 +390,13 @@ public class InteractiveOS_v1 extends Application {
         root.setLeft(leftPane);
         root.setRight(rightPane);
         
-        int windowX = 1000;
-        int windowY = 650;
+        int windowX = 1100;
+        int windowY = 720;
         root.setMaxSize(windowX, windowY);
         root.setMinSize(windowX, windowY);
         Scene scene = new Scene(root, windowX, windowY);
         primaryStage.setScene(scene);
-        primaryStage.setResizable(false);
+        primaryStage.setResizable(true);
         primaryStage.show();
     }
 }

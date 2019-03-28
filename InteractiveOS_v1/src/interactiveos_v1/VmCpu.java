@@ -28,19 +28,24 @@ public class VmCpu {
     }
     
     public void setR1(int value){
-        String zeroBit = value < 16 ? "0" : "";
-        R1.setValue("00" + zeroBit + Integer.toHexString(value));
+        R1.setValue(addZeroBytes(value,4) + Integer.toHexString(value).toUpperCase());
     }
     public void setR2(int value){
-        String zeroBit = value < 16 ? "0" : "";
-        R2.setValue("00" + zeroBit + Integer.toHexString(value));
+        R2.setValue(addZeroBytes(value,4) + Integer.toHexString(value).toUpperCase());
     }
     public void setFHR(int value){
-        String zeroBit = value < 16 ? "0" : "";
-        R3.setValue("00" + zeroBit + Integer.toHexString(value));
+        R3.setValue(addZeroBytes(value,4) + Integer.toHexString(value).toUpperCase());
     }
     
-    ///TODO setSF
+    public void setIC(int value){
+        IC.setValue(addZeroBytes(value,2) + Integer.toHexString(value).toUpperCase());
+    }
+    
+    public void setSF(int value){
+        SF.setValue(addZeroBytes(value,2) + Integer.toHexString(value).toUpperCase());
+    }
+    
+    ////////////////////////////////////////////////////////////////////////////
     
     public SimpleStringProperty r1Property(){
         return R1;
@@ -61,4 +66,16 @@ public class VmCpu {
     public SimpleStringProperty sfProperty(){
         return SF;
     } 
+    
+    public String addZeroBytes(int value, int bytes){
+        value *= Math.pow(16, 4-bytes);
+        String zeroBytes = "";
+        if(value < 4096)
+            zeroBytes += "0";
+        if(value < 256)
+            zeroBytes += "0";
+        if(value < 16)
+            zeroBytes += "0";
+        return zeroBytes;
+    }
 }
