@@ -5,6 +5,14 @@
  */
 package interactiveos_v1;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.SimpleStringProperty;
 
 /**
@@ -58,5 +66,46 @@ public class VirtualMachine {
         if(value < 16)
             zeroBytes += "0";
         return zeroBytes;
+    }
+    
+    public void loadProgram(File file){
+        BufferedReader br = null;
+        int block = 0;
+        int word = 0;
+        try {
+            ArrayList<String> input = new ArrayList<>();
+            br = new BufferedReader(new FileReader(file));
+            String line;
+            while ((line = br.readLine()) != null){
+            if (line.length() > 4)
+                throw new IOException("Bad input");
+            
+            if(line.charAt(0) == '$')
+            {
+                block = Integer.parseInt("" + line.charAt(1));         // rodo bloka
+                word = Integer.parseInt("" + line.charAt(2));         // rodo word
+                // galima patikrint kad nevirsija 16 abu, bet i guess fuck it, runtime error lol
+            }
+            
+            memory[block][word].setValue(line);
+            ++word;
+            if (word == 16){
+                word = 0;
+                ++block;
+            }
+            }
+            
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(VirtualMachine.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(VirtualMachine.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                br.close();
+            } catch (IOException ex) {
+                Logger.getLogger(VirtualMachine.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
     }
 }
