@@ -112,7 +112,7 @@ public class VirtualMachine {
     public void executeStep() throws IOException
     {
 
-        int currentCommandIC = Integer.parseInt(cpu.icProperty().get());
+        int currentCommandIC = Integer.parseInt(cpu.icProperty().get(), 16);
         int ICWord = currentCommandIC % 16;
         int ICBlock = currentCommandIC / 16;
         SimpleStringProperty currentCommand = memory[ICBlock][ICWord];

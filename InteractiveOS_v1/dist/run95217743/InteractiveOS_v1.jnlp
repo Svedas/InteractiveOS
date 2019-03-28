@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="InteractiveOS_v1.jnlp">
+  <information>
+    <title>InteractiveOS_v1</title>
+    <vendor>Mantas</vendor>
+    <description>null</description>
+    <offline-allowed/>
+  </information>
+  <resources>
+    <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="InteractiveOS_v1.jar" size="14113" download="eager" />
+  </resources>
+  <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="InteractiveOS_v1" >
+    <param name="requiredFXVersion" value="8.0+"/>
+  </applet-desc>
+  <jfx:javafx-desc  width="800" height="600" main-class="interactiveos_v1.InteractiveOS_v1"  name="InteractiveOS_v1" />
+  <update check="always"/>
+</jnlp>
