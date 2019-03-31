@@ -32,8 +32,14 @@ import javafx.stage.Stage;
  */
 public class InteractiveOS_v1 extends Application {
     
-    TextField consoleOutputText;
-    TextField consoleInputText;
+    private TextField consoleOutputText;
+    private TextField consoleInputText;
+    
+    private RealMachine rm;
+    private VirtualMachine vm;
+    
+    private GridPane vmMemGrid;
+    
     private boolean needToClearOutput = false;
     private boolean programFinished = false;
     private File sourceCode = null;
@@ -44,14 +50,14 @@ public class InteractiveOS_v1 extends Application {
         BorderPane root = new BorderPane();
         
         //Real Mashine
-        RealMachine rm = new RealMachine();
+        rm = new RealMachine();
         
         //Virtual Machine
-        VirtualMachine vm = new VirtualMachine();     
+        vm = new VirtualMachine();     
  
         //OS startup
         System.out.println("OS loading");
-        rm.startVirtualMachine(vm);
+        //rm.startVirtualMachine(vm);
         
 ////////////////////////////////////////////////////////////////////////////////
         //********************************************************************//
@@ -233,6 +239,9 @@ public class InteractiveOS_v1 extends Application {
         load.setMaxWidth(btnWidth);
         load.setMinWidth(btnWidth);
         load.setOnAction((ActionEvent event) -> {
+            rm.startVirtualMachine(vm);
+            redrawVmGrid();
+            
             FileChooser browser = new FileChooser();
             browser.setInitialDirectory(new File(System.getProperty("user.dir")));
             sourceCode = browser.showOpenDialog(primaryStage);
@@ -319,7 +328,7 @@ public class InteractiveOS_v1 extends Application {
         }
         
         //VM grid
-        GridPane vmMemGrid = new GridPane();
+        vmMemGrid = new GridPane();
         vmMemGrid.gridLinesVisibleProperty().setValue(Boolean.TRUE);
         
         //VM words
@@ -452,5 +461,24 @@ public class InteractiveOS_v1 extends Application {
             } catch (IOException ex) {
                 Logger.getLogger(InteractiveOS_v1.class.getName()).log(Level.SEVERE, null, ex);
             }
+    }
+    
+    
+    void redrawVmGrid(){
+        vmMemGrid.getChildren().retainAll(vmMemGrid.getChildren().get(0));
+        //vmMemGrid.getChildren().clear();
+        //vmMemGrid.gridLinesVisibleProperty().setValue(Boolean.TRUE);
+        for (int block = 0; block < 16; block++){
+            //Block number
+            Label blockNum = new Label(Integer.toHexString(block).toUpperCase());
+            blockNum.setTextFill(Color.NAVY);
+            vmMemGrid.add(blockNum, 0, block);
+            
+            for (int word = 0; word < 16; word++){
+                Label temp = new Label("0");  
+                temp.textProperty().bind(vm.memoryProperty(block, word));
+                vmMemGrid.add(temp, 1+word, block);
+            } 
+        }
     }
 }
