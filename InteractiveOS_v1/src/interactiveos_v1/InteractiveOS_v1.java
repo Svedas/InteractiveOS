@@ -231,6 +231,7 @@ public class InteractiveOS_v1 extends Application {
             if (sourceCode == null)
                 return;
             
+            rm.clearRegisters();
             vm.ClearRegisters();
             vm.ClearMemory();
             programFinished = false;

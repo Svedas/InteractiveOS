@@ -1,0 +1,43 @@
+$00
+RD80
+P904
+RD80
+LR81
+CMP
+JE20
+JL30
+JG40
+PD01
+STOP
+$20
+PA04
+JP07
+$30
+PC03
+JP07
+$40
+PB03
+JP07
+$80
+0x10
+0x15
+$90
+Pirm
+as s
+kaic
+ius$
+$A0
+ lyg
+us a
+ntra
+m$
+$B0
+ did
+esni
+s$
+$C0
+ maz
+esni
+s$
+$D0
+.$

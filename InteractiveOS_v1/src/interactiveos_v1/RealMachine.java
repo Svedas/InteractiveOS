@@ -33,6 +33,7 @@ public class RealMachine {
     
     public void startVirtualMachine(VirtualMachine vm){
         //Sets registers
+        this.clearRegisters();
         vm.ClearRegisters();
 
         //Sets paging table
@@ -105,5 +106,21 @@ public class RealMachine {
         if(value < 16)
             zeroBytes += "0";
         return zeroBytes;
+    }
+    
+    public void clearRegisters()
+    {
+        cpu.setR1(0);
+        cpu.setR2(0);
+        cpu.setR3(0);
+        cpu.setIC(0);
+        cpu.setSF(0);
+        cpu.setMODE(0);
+        cpu.setTI(0);
+        cpu.setSI(0);
+        cpu.setPI(0);
+        cpu.setCH1(0);
+        cpu.setCH2(0);
+        cpu.setCH3(0); 
     }
 }

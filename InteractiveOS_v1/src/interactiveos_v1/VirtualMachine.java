@@ -64,8 +64,7 @@ public class VirtualMachine {
             }
         }
     }
-    public void ClearRegisters()
-    {
+    public void ClearRegisters(){
         cpu.setR1(0);
         cpu.setR2(0);
         cpu.setFHR(0);
@@ -149,6 +148,8 @@ public class VirtualMachine {
         int ICBlock = currentCommandIC / 16;
         SimpleStringProperty currentCommand = memory[ICBlock][ICWord];
         
+        ////////////////////////////////////////////////////////////////////////
+        
         switch(currentCommand.get().substring(0,2))
         {
             case "RD":
@@ -187,8 +188,10 @@ public class VirtualMachine {
                 setWord(x, y, cpu.GetR2Value());
                 break;
             }
-
         }
+        
+        ////////////////////////////////////////////////////////////////////////
+        
         if ("MUL".equals(currentCommand.get().substring(0,3)))
             cpu.setR1(cpu.GetR1Value() * cpu.GetR2Value());
         
@@ -203,6 +206,8 @@ public class VirtualMachine {
         
         else if ("NOT".equals(currentCommand.get().substring(0,3)))
             cpu.setR1(Integer.reverse(cpu.GetR1Value())); //should set flag probably and interupt
+        
+        ////////////////////////////////////////////////////////////////////////
         
         else if ("OUTN".equals(currentCommand.get()))
         {
@@ -237,6 +242,30 @@ public class VirtualMachine {
         }
         else if ("STOP".equals(currentCommand.get()))
             return "$END";
+        
+        ////////////////////////////////////////////////////////////////////////
+        
+        if ("JP".equals(currentCommand.get().substring(0,2))){
+            int x = Integer.parseInt("" + currentCommand.get().charAt(2),16);
+            int y = Integer.parseInt("" + currentCommand.get().charAt(3),16);
+            currentCommandIC = x*16 + y - 1;
+        }
+        else if ("JE".equals(currentCommand.get().substring(0,2)) && cpu.GetSFValue() == 0){
+            int x = Integer.parseInt("" + currentCommand.get().charAt(2),16);
+            int y = Integer.parseInt("" + currentCommand.get().charAt(3),16);
+            currentCommandIC = x*16 + y - 1;
+        }
+        else if ("JG".equals(currentCommand.get().substring(0,2)) && cpu.GetSFValue() == 1){
+            int x = Integer.parseInt("" + currentCommand.get().charAt(2),16);
+            int y = Integer.parseInt("" + currentCommand.get().charAt(3),16);
+            currentCommandIC = x*16 + y - 1;
+        }
+        else if ("JL".equals(currentCommand.get().substring(0,2)) && cpu.GetSFValue() == 2){
+            int x = Integer.parseInt("" + currentCommand.get().charAt(2),16);
+            int y = Integer.parseInt("" + currentCommand.get().charAt(3),16);
+            currentCommandIC = x*16 + y - 1;
+        }
+            
         
         // should be last just in case we have another command starting with "P"
         else if ("P".equals(currentCommand.get().substring(0,1)))
