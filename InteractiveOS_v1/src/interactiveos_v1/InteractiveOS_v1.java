@@ -24,7 +24,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
 /**
@@ -198,7 +197,10 @@ public class InteractiveOS_v1 extends Application {
         run.setMinWidth(btnWidth);
         run.setOnAction((ActionEvent event) -> {
             // run program
-            consoleOutputText.setText("Running");
+            if (sourceCode == null)
+                return;
+            while (!programFinished)
+                executeVmStep(vm, rm);
         });
         
         Button step = new Button("Step");
@@ -207,31 +209,9 @@ public class InteractiveOS_v1 extends Application {
         step.setMinWidth(btnWidth);
         step.setOnAction((ActionEvent event) -> {
             // step program
-            try {
-                if (programFinished)
-                    return;
-                
-                String output = vm.executeStep();
-                if (needToClearOutput)
-                {
-                    consoleOutputText.setText("");
-                    needToClearOutput = false;
-                }
-                if (output.equals("$END"))
-                {
-                    programFinished = true;
-                    return;
-                }
-
-                if (rm.cpu.ch2Property().get().equals("00"))
-                {
-                    rm.cpu.setCH2(1);
-                    consoleOutputText.appendText(output);
-                    rm.cpu.setCH2(0);
-                }
-            } catch (IOException ex) {
-                Logger.getLogger(InteractiveOS_v1.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            if (sourceCode == null)
+                return;
+            executeVmStep(vm, rm);
         });
         
         Button reset = new Button("Reset");
@@ -242,6 +222,8 @@ public class InteractiveOS_v1 extends Application {
             // reset program
             vm.ClearRegisters();
             vm.ClearMemory();
+            programFinished = false;
+            needToClearOutput = true;
             vm.loadProgram(sourceCode);
             consoleOutputText.setText("Reset");
         });
@@ -259,6 +241,7 @@ public class InteractiveOS_v1 extends Application {
             }
             consoleOutputText.setText(sourceCode.toString());
             needToClearOutput = true;
+            programFinished = false;
             // load program
             vm.ClearRegisters();
             vm.ClearMemory();
@@ -440,5 +423,34 @@ public class InteractiveOS_v1 extends Application {
         primaryStage.setScene(scene);
         primaryStage.setResizable(true);
         primaryStage.show();     
+    }
+    
+    private void executeVmStep(VirtualMachine vm, RealMachine rm)
+    {
+         try {
+                if (programFinished)
+                    return;
+                
+                String output = vm.executeStep();
+                if (needToClearOutput)
+                {
+                    consoleOutputText.setText("");
+                    needToClearOutput = false;
+                }
+                if (output.equals("$END"))
+                {
+                    programFinished = true;
+                    return;
+                }
+
+                if (rm.cpu.ch2Property().get().equals("00"))
+                {
+                    rm.cpu.setCH2(1);
+                    consoleOutputText.appendText(output);
+                    rm.cpu.setCH2(0);
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(InteractiveOS_v1.class.getName()).log(Level.SEVERE, null, ex);
+            }
     }
 }
