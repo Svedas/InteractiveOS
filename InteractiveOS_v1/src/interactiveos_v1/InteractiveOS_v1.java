@@ -467,11 +467,16 @@ public class InteractiveOS_v1 extends Application {
             }
             if (output.equals("$END")) {
                 programFinished = true;
+                consoleOutputText.setText("Program finished work");
+
                 return;
             }
             if (rm.cpu.GetCH2Value() == 0 && !output.isEmpty()) {
                 rm.cpu.setCH2(1);
-                consoleOutputText.appendText(output);
+                if (output.startsWith("\n"))
+                    consoleOutputText.setText(output);
+                else
+                    consoleOutputText.appendText(output);
                 rm.cpu.setCH2(0);
             }
             //testInterupts(vm, rm);

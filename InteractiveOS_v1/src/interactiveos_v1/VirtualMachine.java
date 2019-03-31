@@ -9,13 +9,15 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
+import javafx.util.Pair;
 
 /**
  *
@@ -27,7 +29,10 @@ public class VirtualMachine {
     public final VmCpu cpu;
     private final SimpleStringProperty[][] memory = new SimpleStringProperty[16][16];
     private RealMachine rmRef = null;
+    private int fileCounter = 1;
+    Map<Integer, MyFile> fileHandles;
     public VirtualMachine(RealMachine rm){ 
+        fileHandles = new HashMap<>();
         cpu = new VmCpu();
         rmRef = rm;
         for (int i = 0; i < 16; ++i){
@@ -262,7 +267,57 @@ public class VirtualMachine {
         }
         else if ("STOP".equals(currentCommand.get()))
             returnValue = "$END";
-        
+
+        else if ("OPEN".equals(currentCommand.get()))
+        {
+            rmRef.cpu.setSI(6);
+            int x = Integer.parseInt("" + cpu.r1Property().get().charAt(6),16);
+            int y = Integer.parseInt("" + cpu.r1Property().get().charAt(7),16);
+            String filename = "";
+            int i = y;
+
+            while (!memory[x][i].get().contains("$"))
+                {
+                filename += memory[x][i].get();
+                ++i;
+                }
+
+            filename += memory[x][i].get().substring(0, memory[x][i].get().indexOf('$'));
+            File file = new File(filename);
+            FileWriter fw = new FileWriter(file);
+            FileReader fr = new FileReader(file);
+            fileHandles.put(fileCounter, new MyFile(fr, fw, file));
+            
+            cpu.setFHR(fileCounter++);
+            rmRef.cpu.setSI(0);
+            returnValue = "\nFile Opened";
+        }
+        else if ("CLO".equals(currentCommand.get().substring(0,3)))
+        {
+            int fhr = cpu.GetR3Value();
+            MyFile file = fileHandles.get(cpu.GetR3Value());
+            file.closeStreams();
+            fileHandles.remove(fhr);
+            returnValue = "\nFile Closed";
+
+        }
+        else if ("DEL".equals(currentCommand.get().substring(0,3)))
+        {
+            int fhr = cpu.GetR3Value();
+            MyFile file = fileHandles.get(cpu.GetR3Value());
+            file.deleteFile();
+            fileHandles.remove(fhr);
+            returnValue = "\nFile Deleted";
+
+        }
+        else if ("FHR1".equals(currentCommand.get()))
+        {
+            cpu.setR1(cpu.GetR3Value());
+        }
+        else if ("R1FH".equals(currentCommand.get()))
+        {
+            cpu.setFHR(cpu.GetR1Value());
+        }
         ////////////////////////////////////////////////////////////////////////
         
         else if ("JP".equals(currentCommand.get().substring(0,2))){
