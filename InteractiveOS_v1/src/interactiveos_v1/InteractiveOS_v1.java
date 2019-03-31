@@ -35,7 +35,7 @@ public class InteractiveOS_v1 extends Application {
     
     TextField consoleOutputText;
     TextField consoleInputText;
-
+    boolean needToClearOutput = false;
     @Override
     public void start(Stage primaryStage) {
         
@@ -205,9 +205,15 @@ public class InteractiveOS_v1 extends Application {
         step.setMinWidth(btnWidth);
         step.setOnAction((ActionEvent event) -> {
             // step program
-            consoleOutputText.setText("Step");
             try {
-                vm.executeStep();
+                String output = vm.executeStep();
+                if (needToClearOutput)
+                {
+                    consoleOutputText.setText("");
+                    needToClearOutput = false;
+                }
+                
+                consoleOutputText.appendText(output);
             } catch (IOException ex) {
                 Logger.getLogger(InteractiveOS_v1.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -234,6 +240,7 @@ public class InteractiveOS_v1 extends Application {
                 return;
             }
             consoleOutputText.setText(sourceCode.toString());
+            needToClearOutput = true;
             // load program
             vm.loadProgram(sourceCode);
         });

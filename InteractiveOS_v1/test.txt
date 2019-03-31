@@ -16,4 +16,4 @@ $90
 000A
 Rezu
 ltat
-as$
+as $

@@ -65,7 +65,23 @@ public class VmCpu {
     
     public SimpleStringProperty sfProperty(){
         return SF;
-    } 
+    }
+    
+    public int GetR1Value(){
+        return Integer.parseInt(R1.get(),16);  
+    }
+    public int GetR2Value(){
+        return Integer.parseInt(R2.get(),16);  
+    }
+    public int GetR3Value(){
+        return Integer.parseInt(R3.get(),16);  
+    }
+    public int GetICValue(){
+        return Integer.parseInt(IC.get(),16);  
+    }
+    public int GetSFValue(){
+        return Integer.parseInt(SF.get(),16);  
+    }
     
     public String addZeroHex(int value, int bytes){
         String zeroBytes = "";

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.scene.control.TextField;
 
 /**
  *
@@ -82,8 +83,8 @@ public class VirtualMachine {
 
                 if(line.charAt(0) == '$')
                 {
-                    block = Integer.parseInt("" + line.charAt(1));         // rodo bloka
-                    word = Integer.parseInt("" + line.charAt(2));         // rodo word
+                    block = Integer.parseInt("" + line.charAt(1),16);         // rodo bloka
+                    word = Integer.parseInt("" + line.charAt(2),16);         // rodo word
                     continue;
                     // galima patikrint kad nevirsija 16 abu, bet i guess fuck it, runtime error lol
                 }
@@ -109,7 +110,7 @@ public class VirtualMachine {
         }
         
     }
-    public void executeStep() throws IOException
+    public String executeStep() throws IOException
     {
 
         int currentCommandIC = Integer.parseInt(cpu.icProperty().get(), 16);
@@ -120,16 +121,55 @@ public class VirtualMachine {
         switch(currentCommand.get().substring(0,2))
         {
             case "RD":
-                int x = Integer.parseInt("" + currentCommand.get().charAt(2));
-                int y = Integer.parseInt("" + currentCommand.get().charAt(3));
-                int value = Integer.parseInt("" + memory[x][y].get());
+            {
+                int x = Integer.parseInt("" + currentCommand.get().charAt(2),16);
+                int y = Integer.parseInt("" + currentCommand.get().charAt(3),16);
+                int value = Integer.parseInt("" + memory[x][y].get(), 16);
                 cpu.setR1(value);
                 break;
+            }
+            case "LR":
+            {
+                int x = Integer.parseInt("" + currentCommand.get().charAt(2),16);
+                int y = Integer.parseInt("" + currentCommand.get().charAt(3),16);
+                int value = Integer.parseInt("" + memory[x][y].get(), 16);
+                cpu.setR2(value);
+                break;
+            }
             default:
 //                throw new IOException("not implemented");
 
         }
-        cpu.setIC(++currentCommandIC);
+        if ("MUL".equals(currentCommand.get().substring(0,3)))
+            cpu.setR1(cpu.GetR1Value() * cpu.GetR2Value());
         
+        else if ("ADD".equals(currentCommand.get().substring(0,3)))
+            cpu.setR1(cpu.GetR1Value() + cpu.GetR2Value());
+        
+        else if ("OUTN".equals(currentCommand.get()))
+        {
+            int valueDecimal = cpu.GetR1Value();
+            cpu.setIC(++currentCommandIC);
+            return String.valueOf(valueDecimal);
+        }
+        
+        
+        // should be last just in case we have another command starting with "P"
+        else if ("P".equals(currentCommand.get().substring(0,1)))
+        {
+            int x = Integer.parseInt(currentCommand.get().substring(1,2), 16);
+            int y = Integer.parseInt(currentCommand.get().substring(2,3), 16);
+            int z = Integer.parseInt(currentCommand.get().substring(3,4), 16);
+            String output = "";
+            for(int i = y; i < z; ++i)
+                output += memory[x][i].get();
+            
+            output = output.substring(0, output.indexOf('$'));
+            cpu.setIC(++currentCommandIC);
+            return output;
+        }
+        
+        cpu.setIC(++currentCommandIC);
+        return "";
     }
 }
