@@ -1,5 +1,6 @@
 $00
 RD92
+READ
 LR93
 CMP
 OUTS

@@ -93,6 +93,9 @@ public class VmCpu {
         }
         value *= Math.pow(16, 8-(bytes*2));
         //zeroBytes += "0";
+        
+        if(value < 0)
+            return zeroBytes;
         if(value < 268435456)
             zeroBytes += "0";
         if(value < 16777216)
