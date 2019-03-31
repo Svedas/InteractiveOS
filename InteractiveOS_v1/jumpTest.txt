@@ -1,8 +1,9 @@
 $00
-RD80
+READ
+WR95
+LR95
+READ
 P904
-RD80
-LR81
 CMP
 JE20
 JL30
@@ -11,25 +12,25 @@ PD01
 STOP
 $20
 PA04
-JP07
+JP0A
 $30
 PC03
-JP07
+JP0A
 $40
 PB03
-JP07
+JP0A
 $80
 0x10
 0x15
 $90
-Pirm
+Antr
 as s
 kaic
 ius$
 $A0
  lyg
-us a
-ntra
+us p
+irma
 m$
 $B0
  did

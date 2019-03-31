@@ -35,7 +35,7 @@ import javafx.stage.Stage;
 public class InteractiveOS_v1 extends Application {
 
     private TextField consoleOutputText;
-    private TextField consoleInputText;
+    //private TextField consoleInputText;
 
     private RealMachine rm;
     private VirtualMachine vm;
@@ -376,7 +376,7 @@ public class InteractiveOS_v1 extends Application {
         }
 
         //Input label
-        Label consoleInputLabel = new Label("\tConsole Input");
+        /*Label consoleInputLabel = new Label("\tConsole Input");
         consoleInputLabel.setTextFill(Color.NAVY);
 
         //Input textfield
@@ -389,7 +389,7 @@ public class InteractiveOS_v1 extends Application {
             if (keyEvent.getCode() == KeyCode.ENTER) {
                 input = consoleInputText.getText();
             }
-        });
+        });*/
         //Output label
         Label consoleOutputLabel = new Label("\tConsole Output");
         consoleOutputLabel.setTextFill(Color.NAVY);
@@ -437,8 +437,8 @@ public class InteractiveOS_v1 extends Application {
         rightPane.getChildren().add(vmMemLabel);
         rightPane.getChildren().add(vmLabelScroll);
         rightPane.getChildren().add(vmMemScroll);
-        rightPane.getChildren().add(consoleInputLabel);
-        rightPane.getChildren().add(consoleInputText);
+        //rightPane.getChildren().add(consoleInputLabel);
+        //rightPane.getChildren().add(consoleInputText);
         rightPane.getChildren().add(consoleOutputLabel);
         rightPane.getChildren().add(consoleOutputText);
 
