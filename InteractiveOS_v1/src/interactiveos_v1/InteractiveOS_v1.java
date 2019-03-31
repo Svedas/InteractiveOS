@@ -226,6 +226,9 @@ public class InteractiveOS_v1 extends Application {
         reset.setMinWidth(btnWidth);
         reset.setOnAction((ActionEvent event) -> {
             // reset program
+            if (sourceCode == null)
+                return;
+            
             vm.ClearRegisters();
             vm.ClearMemory();
             programFinished = false;

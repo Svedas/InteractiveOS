@@ -82,7 +82,7 @@ public class VirtualMachine {
             zeroBytes += "0";
         if(value < 16)
             zeroBytes += "0";
-        return zeroBytes;
+        return zeroBytes + value;
     }
     
     public void loadProgram(File file){
@@ -152,6 +152,20 @@ public class VirtualMachine {
                 cpu.setR2(value);
                 break;
             }
+            case "WR":
+            {
+                int x = Integer.parseInt("" + currentCommand.get().charAt(2),16);
+                int y = Integer.parseInt("" + currentCommand.get().charAt(3),16);
+                setWord(x, y, cpu.GetR1Value());
+                break;
+            }
+            case "SR":
+            {
+                int x = Integer.parseInt("" + currentCommand.get().charAt(2),16);
+                int y = Integer.parseInt("" + currentCommand.get().charAt(3),16);
+                setWord(x, y, cpu.GetR2Value());
+                break;
+            }
             default:
 //                throw new IOException("not implemented");
 
@@ -161,6 +175,15 @@ public class VirtualMachine {
         
         else if ("ADD".equals(currentCommand.get().substring(0,3)))
             cpu.setR1(cpu.GetR1Value() + cpu.GetR2Value());
+        
+        else if ("SUB".equals(currentCommand.get().substring(0,3)))
+            cpu.setR1(cpu.GetR1Value() - cpu.GetR2Value());
+        
+        else if ("DIV".equals(currentCommand.get().substring(0,3)))
+            cpu.setR1(cpu.GetR1Value() / cpu.GetR2Value()); //should set flag probably and interupt
+        
+        else if ("NOT".equals(currentCommand.get().substring(0,3)))
+            cpu.setR1(Integer.reverse(cpu.GetR1Value())); //should set flag probably and interupt
         
         else if ("OUTN".equals(currentCommand.get()))
         {
