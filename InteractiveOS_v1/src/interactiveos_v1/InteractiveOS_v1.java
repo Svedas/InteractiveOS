@@ -351,8 +351,18 @@ public class InteractiveOS_v1 extends Application {
         }
         
         //Column constraints
-        int width = 48;
-        for (int i = 0; i < 17; i++){
+        int width = 56;
+        
+        ColumnConstraints columnConstr0 = new ColumnConstraints();
+        columnConstr0.setMinWidth(width/2);
+        columnConstr0.setMaxWidth(width/2);
+        columnConstr0.setHalignment(HPos.CENTER);
+        rmMemGrid.getColumnConstraints().add(columnConstr0);
+        vmMemGrid.getColumnConstraints().add(columnConstr0);
+        rmMemLabelGrid.getColumnConstraints().add(columnConstr0);
+        vmMemLabelGrid.getColumnConstraints().add(columnConstr0);
+        
+        for (int i = 1; i < 17; i++){
             ColumnConstraints columnConstr = new ColumnConstraints();
             columnConstr.setMinWidth(width);
             columnConstr.setMaxWidth(width);
@@ -436,14 +446,14 @@ public class InteractiveOS_v1 extends Application {
         root.setLeft(leftPane);
         root.setRight(rightPane);
         
-        int windowX = 1100;
+        int windowX = 1200;
         int windowY = 720;
         root.setMaxSize(windowX, windowY);
         root.setMinSize(windowX, windowY);
         Scene scene = new Scene(root, windowX, windowY);
         primaryStage.setScene(scene);
         primaryStage.setResizable(true);
-        primaryStage.show();     
+        primaryStage.show();   
     }
     
     private void executeVmStep(VirtualMachine vm, RealMachine rm)
