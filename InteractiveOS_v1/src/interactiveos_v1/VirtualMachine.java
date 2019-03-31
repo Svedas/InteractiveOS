@@ -43,7 +43,7 @@ public class VirtualMachine {
     }
     
     public void setWord(int block, int word, int value) {
-        memory[block][word].setValue(addZeroBytes(value,4));
+        memory[block][word].setValue(addZeroBytes(value,4) + Integer.toHexString(value).toUpperCase());
     }
     
     public void setWordStringProperty(int block, int word, SimpleStringProperty stringPropery) {
@@ -179,7 +179,20 @@ public class VirtualMachine {
             {
                 int x = Integer.parseInt("" + currentCommand.get().charAt(2),16);
                 int y = Integer.parseInt("" + currentCommand.get().charAt(3),16);
-                setWordStr(x, y, "0x" + cpu.r1Property().get());
+                String reg = "0x" + cpu.r1Property().get();
+                System.out.print(reg);
+                if(reg.length() > 2 && reg.substring(0,2).equals("0x")){// written in hex
+                    String hexString = "0x";
+                    boolean keepTrimming = true;
+                    for (int i = 2; i < reg.length(); ++i){
+                        if (reg.charAt(i) == '0' && keepTrimming)
+                            continue;
+                        hexString += reg.charAt(i);
+                        keepTrimming = false;
+                    }
+                    reg = hexString;
+                }
+                setWordStr(x, y, reg);
                 break;
             }
             case "SR":
