@@ -6,7 +6,6 @@
 package interactiveos_v1;
 
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 
 /**
  *
@@ -38,9 +37,9 @@ public class RmCpu {
         TI = new SimpleStringProperty("TIx");
         SI = new SimpleStringProperty("SIx");
         PI = new SimpleStringProperty("PIx");
-        CH1 = new SimpleStringProperty("CH1x");
-        CH2 = new SimpleStringProperty("CH2x");
-        CH3 = new SimpleStringProperty("CH3x");
+        CH1 = new SimpleStringProperty("00");
+        CH2 = new SimpleStringProperty("00");
+        CH3 = new SimpleStringProperty("00");
     }
 
     public void setPTR(int value){

@@ -33,12 +33,8 @@ public class RealMachine {
     
     public void startVirtualMachine(VirtualMachine vm){
         //Sets registers
-        vm.cpu.setR1(0);
-        vm.cpu.setR2(0);
-        vm.cpu.setFHR(0);
-        vm.cpu.setIC(0);
-        vm.cpu.setSF(0);
-        
+        vm.ClearRegisters();
+
         //Sets paging table
         int ptrBlock = 0;
         cpu.setPTR(ptrBlock);

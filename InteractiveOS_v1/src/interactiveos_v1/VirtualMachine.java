@@ -57,6 +57,22 @@ public class VirtualMachine {
         return memory[block][word];
     }
     
+    public void ClearMemory(){
+        for (int i = 0; i < 16; ++i){
+            for (int j = 0; j < 16; ++j){
+                setWordStr(i, j, "0000");
+            }
+        }
+    }
+    public void ClearRegisters()
+    {
+        cpu.setR1(0);
+        cpu.setR2(0);
+        cpu.setFHR(0);
+        cpu.setIC(0);
+        cpu.setSF(0);
+    }
+    
     public String addZeroBytes(int value, int bytes){
         value *= Math.pow(16, 4-bytes);
         String zeroBytes = "";
@@ -152,7 +168,8 @@ public class VirtualMachine {
             cpu.setIC(++currentCommandIC);
             return String.valueOf(valueDecimal);
         }
-        
+        else if ("STOP".equals(currentCommand.get()))
+            return "$END";
         
         // should be last just in case we have another command starting with "P"
         else if ("P".equals(currentCommand.get().substring(0,1)))

@@ -35,7 +35,9 @@ public class InteractiveOS_v1 extends Application {
     
     TextField consoleOutputText;
     TextField consoleInputText;
-    boolean needToClearOutput = false;
+    private boolean needToClearOutput = false;
+    private boolean programFinished = false;
+    private File sourceCode = null;
     @Override
     public void start(Stage primaryStage) {
         
@@ -206,14 +208,27 @@ public class InteractiveOS_v1 extends Application {
         step.setOnAction((ActionEvent event) -> {
             // step program
             try {
+                if (programFinished)
+                    return;
+                
                 String output = vm.executeStep();
                 if (needToClearOutput)
                 {
                     consoleOutputText.setText("");
                     needToClearOutput = false;
                 }
-                
-                consoleOutputText.appendText(output);
+                if (output.equals("$END"))
+                {
+                    programFinished = true;
+                    return;
+                }
+
+                if (rm.cpu.ch2Property().get().equals("00"))
+                {
+                    rm.cpu.setCH2(1);
+                    consoleOutputText.appendText(output);
+                    rm.cpu.setCH2(0);
+                }
             } catch (IOException ex) {
                 Logger.getLogger(InteractiveOS_v1.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -225,6 +240,9 @@ public class InteractiveOS_v1 extends Application {
         reset.setMinWidth(btnWidth);
         reset.setOnAction((ActionEvent event) -> {
             // reset program
+            vm.ClearRegisters();
+            vm.ClearMemory();
+            vm.loadProgram(sourceCode);
             consoleOutputText.setText("Reset");
         });
         
@@ -235,13 +253,15 @@ public class InteractiveOS_v1 extends Application {
         load.setOnAction((ActionEvent event) -> {
             FileChooser browser = new FileChooser();
             browser.setInitialDirectory(new File(System.getProperty("user.dir")));
-            File sourceCode = browser.showOpenDialog(primaryStage);
+            sourceCode = browser.showOpenDialog(primaryStage);
             if (sourceCode == null){
                 return;
             }
             consoleOutputText.setText(sourceCode.toString());
             needToClearOutput = true;
             // load program
+            vm.ClearRegisters();
+            vm.ClearMemory();
             vm.loadProgram(sourceCode);
         });
         
