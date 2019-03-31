@@ -18,6 +18,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -53,7 +55,7 @@ public class InteractiveOS_v1 extends Application {
         rm = new RealMachine();
         
         //Virtual Machine
-        vm = new VirtualMachine();     
+        vm = new VirtualMachine(rm);     
  
         //OS startup
         System.out.println("OS loading");
@@ -370,6 +372,13 @@ public class InteractiveOS_v1 extends Application {
         consoleInputText.setMinSize(800, 25);
         consoleInputText.setMaxSize(800, 25);
         
+        
+        consoleInputText.setOnKeyPressed((final KeyEvent keyEvent) -> {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            consoleInputText.getText();
+            
+        }
+    });
         //Output label
         Label consoleOutputLabel = new Label("\tConsole Output");
         consoleOutputLabel.setTextFill(Color.NAVY);

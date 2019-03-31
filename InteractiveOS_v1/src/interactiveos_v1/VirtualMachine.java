@@ -25,10 +25,10 @@ public class VirtualMachine {
     private int ptr = 0;
     public final VmCpu cpu;
     private final SimpleStringProperty[][] memory = new SimpleStringProperty[16][16];
-    
-    public VirtualMachine(){ 
+    private RealMachine rmRef = null;
+    public VirtualMachine(RealMachine rm){ 
         cpu = new VmCpu();
-        
+        rmRef = rm;
         for (int i = 0; i < 16; ++i){
             memory[i] = new SimpleStringProperty[16];
             for (int j = 0; j < 16; ++j){
@@ -90,7 +90,6 @@ public class VirtualMachine {
         int block = 0;
         int word = 0;
         try {
-            ArrayList<String> input = new ArrayList<>();
             br = new BufferedReader(new FileReader(file));
             String line;
             while ((line = br.readLine()) != null){
@@ -105,7 +104,7 @@ public class VirtualMachine {
                     // galima patikrint kad nevirsija 16 abu, bet i guess fuck it, runtime error lol
                 }
 
-                else if(line.substring(0,2).equals("0x"))
+                else if(line.length() > 2 && line.substring(0,2).equals("0x"))
                 {// written in hex
                     String hexString = "0x";
                     boolean keepTrimming = true;
@@ -188,8 +187,6 @@ public class VirtualMachine {
                 setWord(x, y, cpu.GetR2Value());
                 break;
             }
-            default:
-//                throw new IOException("not implemented");
 
         }
         if ("MUL".equals(currentCommand.get().substring(0,3)))
@@ -212,6 +209,31 @@ public class VirtualMachine {
             int valueDecimal = cpu.GetR1Value();
             cpu.setIC(++currentCommandIC);
             return String.valueOf(valueDecimal);
+        }
+        else if ("OUTS".equals(currentCommand.get()))
+        {
+            int value = cpu.GetR1Value();
+            cpu.setIC(++currentCommandIC);
+            return String.valueOf((char)value);
+        }
+        else if ("READ".equals(currentCommand.get()))
+        {
+            rmRef.cpu.setSI(4);
+            return ""; //do not increase counter, we are on the same command  
+            //wait till input entered?
+            //int value = 45;
+            //cpu.setR1(value); //should set flag probably and interupt
+        }
+        else if ("CMP".equals(currentCommand.get().substring(0,3)))
+        {
+            int R1 = cpu.GetR1Value();
+            int R2 = cpu.GetR2Value();
+            if (R1 > R2)
+                cpu.setSF(1);
+            else if (R1 < R2)
+                cpu.setSF(2);
+            else if(R1 == R2)
+                cpu.setSF(0);
         }
         else if ("STOP".equals(currentCommand.get()))
             return "$END";

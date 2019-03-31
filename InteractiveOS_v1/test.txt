@@ -1,6 +1,8 @@
 $00
 RD92
 LR93
+CMP
+OUTS
 WR9A
 SR99
 MUL
@@ -13,9 +15,9 @@ OUTN
 LR97
 STOP
 $90
-0x1
-0x02
-0x0003
+0001
+2
+0x0054
 000A
 Rezu
 ltat
