@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 
 /**
  *
@@ -81,7 +82,7 @@ public class VirtualMachine {
             zeroBytes += "0";
         if(value < 16)
             zeroBytes += "0";
-        return zeroBytes + value;
+        return zeroBytes;
     }
     
     public void loadProgram(File file){
@@ -147,7 +148,7 @@ public class VirtualMachine {
         int ICWord = currentCommandIC % 16;
         int ICBlock = currentCommandIC / 16;
         SimpleStringProperty currentCommand = memory[ICBlock][ICWord];
-        
+        String returnValue = "";
         ////////////////////////////////////////////////////////////////////////
         
         switch(currentCommand.get().substring(0,2))
@@ -178,14 +179,15 @@ public class VirtualMachine {
             {
                 int x = Integer.parseInt("" + currentCommand.get().charAt(2),16);
                 int y = Integer.parseInt("" + currentCommand.get().charAt(3),16);
-                setWord(x, y, cpu.GetR1Value());
+                setWordStr(x, y, "0x" + cpu.r1Property().get());
                 break;
             }
             case "SR":
             {
                 int x = Integer.parseInt("" + currentCommand.get().charAt(2),16);
                 int y = Integer.parseInt("" + currentCommand.get().charAt(3),16);
-                setWord(x, y, cpu.GetR2Value());
+                setWordStr(x, y, "0x" + cpu.r2Property().get());
+
                 break;
             }
         }
@@ -212,22 +214,27 @@ public class VirtualMachine {
         else if ("OUTN".equals(currentCommand.get()))
         {
             int valueDecimal = cpu.GetR1Value();
-            cpu.setIC(++currentCommandIC);
-            return String.valueOf(valueDecimal);
+            returnValue = String.valueOf(valueDecimal);
         }
         else if ("OUTS".equals(currentCommand.get()))
         {
             int value = cpu.GetR1Value();
-            cpu.setIC(++currentCommandIC);
-            return String.valueOf((char)value);
+            returnValue = String.valueOf((char)value);
         }
         else if ("READ".equals(currentCommand.get()))
         {
             rmRef.cpu.setSI(4);
-            return ""; //do not increase counter, we are on the same command  
-            //wait till input entered?
-            //int value = 45;
-            //cpu.setR1(value); //should set flag probably and interupt
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setResizable(false);
+            dialog.setHeaderText("Enter a number:");
+            dialog.setWidth(10);
+            dialog.setGraphic(null);
+            dialog.setTitle("input device");
+            dialog.showAndWait();
+            String input = dialog.getEditor().getText();
+            cpu.setR1(Integer.parseInt(input));
+            rmRef.cpu.setSI(0);
+
         }
         else if ("CMP".equals(currentCommand.get().substring(0,3)))
         {
@@ -241,11 +248,11 @@ public class VirtualMachine {
                 cpu.setSF(0);
         }
         else if ("STOP".equals(currentCommand.get()))
-            return "$END";
+            returnValue = "$END";
         
         ////////////////////////////////////////////////////////////////////////
         
-        if ("JP".equals(currentCommand.get().substring(0,2))){
+        else if ("JP".equals(currentCommand.get().substring(0,2))){
             int x = Integer.parseInt("" + currentCommand.get().charAt(2),16);
             int y = Integer.parseInt("" + currentCommand.get().charAt(3),16);
             currentCommandIC = x*16 + y - 1;
@@ -265,7 +272,6 @@ public class VirtualMachine {
             int y = Integer.parseInt("" + currentCommand.get().charAt(3),16);
             currentCommandIC = x*16 + y - 1;
         }
-            
         
         // should be last just in case we have another command starting with "P"
         else if ("P".equals(currentCommand.get().substring(0,1)))
@@ -278,11 +284,10 @@ public class VirtualMachine {
                 output += memory[x][i].get();
             
             output = output.substring(0, output.indexOf('$'));
-            cpu.setIC(++currentCommandIC);
-            return output;
+            returnValue = output;
         }
         
         cpu.setIC(++currentCommandIC);
-        return "";
+        return returnValue;
     }
 }

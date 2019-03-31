@@ -172,4 +172,10 @@ public class RmCpu {
             zeroBytes += "0";
         return zeroBytes;
     }
+    public int GetCH2Value(){
+        return Integer.parseInt(CH2.get(),16);  
+    }
+    public int GetSIValue(){
+        return Integer.parseInt(SI.get(),16);  
+    }
 }
