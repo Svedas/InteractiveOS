@@ -44,6 +44,8 @@ public class VirtualMachine {
     }
 
     public void setWordStr(int block, int word, String value) {
+        value = value.replace("\r", "\\r");
+        value = value.replace("\n", "\\n");
         memory[block][word].setValue(value);
     }
     
@@ -284,7 +286,7 @@ public class VirtualMachine {
 
             filename += memory[x][i].get().substring(0, memory[x][i].get().indexOf('$'));
             File file = new File(filename);
-            FileWriter fw = new FileWriter(file);
+            FileWriter fw = new FileWriter(file, true);
             FileReader fr = new FileReader(file);
             fileHandles.put(fileCounter, new MyFile(fr, fw, file));
             
@@ -294,21 +296,23 @@ public class VirtualMachine {
         }
         else if ("CLO".equals(currentCommand.get().substring(0,3)))
         {
+            rmRef.cpu.setSI(9);
             int fhr = cpu.GetR3Value();
             MyFile file = fileHandles.get(cpu.GetR3Value());
             file.closeStreams();
             fileHandles.remove(fhr);
             returnValue = "\nFile Closed";
-
+            rmRef.cpu.setSI(0);
         }
         else if ("DEL".equals(currentCommand.get().substring(0,3)))
         {
+            rmRef.cpu.setSI(10);
             int fhr = cpu.GetR3Value();
             MyFile file = fileHandles.get(cpu.GetR3Value());
             file.deleteFile();
             fileHandles.remove(fhr);
             returnValue = "\nFile Deleted";
-
+            rmRef.cpu.setSI(0);
         }
         else if ("FHR1".equals(currentCommand.get()))
         {
@@ -317,6 +321,78 @@ public class VirtualMachine {
         else if ("R1FH".equals(currentCommand.get()))
         {
             cpu.setFHR(cpu.GetR1Value());
+        }
+        else if ("RF".equals(currentCommand.get().substring(0,2)))
+        {
+            rmRef.cpu.setSI(7);
+            int fhr = cpu.GetR3Value();
+            MyFile file = fileHandles.get(cpu.GetR3Value());
+            int x = Integer.parseInt(currentCommand.get().substring(2,3), 16);
+            int y = Integer.parseInt(currentCommand.get().substring(3,4), 16);
+            boolean finishedReading = false;
+            char temp[] = new char[4];
+            int j = 0;
+            int i = y;
+            for(i = y; i < 16; ++i)
+            {
+                temp = new char[4];
+                for(j = 0; j < 4; ++j)
+                {
+                    int readValue = file.fr.read();
+                    if (readValue == -1)
+                    {
+                        finishedReading = true;
+                        break;
+                    }
+                    temp[j] = (char) readValue;
+                }
+
+                if (y % 16 == 0 && y != 0)
+                    x++;
+                    
+                setWordStr(x, i, String.valueOf(temp));
+
+                if (finishedReading)
+                    break;
+            }
+             if (j < 3)
+                {
+                    temp[3] = '$';
+                    setWordStr(x, i, String.valueOf(temp));
+                }
+                else
+                {
+                    if (i%16 != 0)
+                        setWordStr(x, i+1, String.valueOf("$"));
+                    else
+                        setWordStr(x+1, i, String.valueOf("$"));
+                }
+            //file.
+            rmRef.cpu.setSI(0);
+
+        }
+        else if ("WF".equals(currentCommand.get().substring(0,2)))
+        {
+            rmRef.cpu.setSI(8);
+            int fhr = cpu.GetR3Value();
+            MyFile file = fileHandles.get(cpu.GetR3Value());
+            int x = Integer.parseInt(currentCommand.get().substring(2,3), 16);
+            int y = Integer.parseInt(currentCommand.get().substring(3,4), 16);
+            String output = "";
+            for(int i = y; i < 16; ++i)
+            {
+                if (y % 16 == 0 && y != 0)
+                    x++;
+                output += memory[x][i].get();  //atminty /r/n
+            }
+            
+            output = output.substring(0, output.indexOf('$'));
+            output = output.replace("\\r", "\r");
+            output = output.replace("\\n", "\n");
+
+            file.fw.append(output);
+            rmRef.cpu.setSI(0);
+   
         }
         ////////////////////////////////////////////////////////////////////////
         

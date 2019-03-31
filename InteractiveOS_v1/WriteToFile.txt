@@ -1,0 +1,19 @@
+$00
+RD80
+OPEN
+WFA3
+CLO
+STOP
+$80
+90
+$90
+file
+rez.
+txt$
+$A0
+duom
+enys
+ cia
+pate
+ikti
+ $
