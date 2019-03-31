@@ -94,7 +94,7 @@ public class VirtualMachine {
             br = new BufferedReader(new FileReader(file));
             String line;
             while ((line = br.readLine()) != null){
-                if (line.length() > 4)
+                if (line.length() > 4 && (!line.contains("0x") || line.length() > 10))
                     throw new IOException("Bad input");
 
                 if(line.charAt(0) == '$')
@@ -105,6 +105,22 @@ public class VirtualMachine {
                     // galima patikrint kad nevirsija 16 abu, bet i guess fuck it, runtime error lol
                 }
 
+                else if(line.substring(0,2).equals("0x"))
+                {// written in hex
+                    String hexString = "0x";
+                    boolean keepTrimming = true;
+                    for (int i = 2; i < line.length(); ++i)
+                    {
+                        if (line.charAt(i) == '0' && keepTrimming)
+                            continue;
+
+                        hexString += line.charAt(i);
+                        keepTrimming = false;
+
+                    }
+                    line = hexString;
+                }
+                
                 memory[block][word].setValue(line);
                 ++word;
                 if (word == 16){
@@ -140,7 +156,10 @@ public class VirtualMachine {
             {
                 int x = Integer.parseInt("" + currentCommand.get().charAt(2),16);
                 int y = Integer.parseInt("" + currentCommand.get().charAt(3),16);
-                int value = Integer.parseInt("" + memory[x][y].get(), 16);
+                String valueStr = memory[x][y].get();
+                if (valueStr.contains("0x"))
+                    valueStr = valueStr.substring(2);
+                int value = Integer.parseInt(valueStr, 16);
                 cpu.setR1(value);
                 break;
             }
@@ -148,7 +167,10 @@ public class VirtualMachine {
             {
                 int x = Integer.parseInt("" + currentCommand.get().charAt(2),16);
                 int y = Integer.parseInt("" + currentCommand.get().charAt(3),16);
-                int value = Integer.parseInt("" + memory[x][y].get(), 16);
+                String valueStr = memory[x][y].get();
+                if (valueStr.contains("0x"))
+                    valueStr = valueStr.substring(2);
+                int value = Integer.parseInt(valueStr, 16);
                 cpu.setR2(value);
                 break;
             }
