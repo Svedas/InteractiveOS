@@ -181,4 +181,7 @@ public class RmCpu {
     public int GetSIValue(){
         return Integer.parseInt(SI.get(),16);  
     }
+    public int GetTIValue(){
+        return Integer.parseInt(TI.get(),16);  
+    }
 }

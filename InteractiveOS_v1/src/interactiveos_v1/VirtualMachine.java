@@ -25,7 +25,7 @@ import javafx.util.Pair;
  */
 public class VirtualMachine {
     
-    private int ptr = 0;
+    public static int faze = 1;
     public final VmCpu cpu;
     private final SimpleStringProperty[][] memory = new SimpleStringProperty[16][16];
     private RealMachine rmRef = null;
@@ -244,6 +244,7 @@ public class VirtualMachine {
         else if ("READ".equals(currentCommand.get()))
         {
             rmRef.cpu.setSI(4);
+            rmRef.cpu.setMODE(1);
             TextInputDialog dialog = new TextInputDialog();
             dialog.setResizable(false);
             dialog.setHeaderText("Enter a number:");
@@ -254,6 +255,7 @@ public class VirtualMachine {
             String input = dialog.getEditor().getText();
             cpu.setR1(Integer.parseInt(input));
             rmRef.cpu.setSI(0);
+            rmRef.cpu.setMODE(0);
 
         }
         else if ("CMP".equals(currentCommand.get().substring(0,3)))
@@ -272,7 +274,14 @@ public class VirtualMachine {
 
         else if ("OPEN".equals(currentCommand.get()))
         {
+            if(faze == 1)
+            {
             rmRef.cpu.setSI(6);
+            rmRef.cpu.setMODE(1);
+            faze = 2;
+            return "";
+            }
+            else if (faze == 2){
             int x = Integer.parseInt("" + cpu.r1Property().get().charAt(6),16);
             int y = Integer.parseInt("" + cpu.r1Property().get().charAt(7),16);
             String filename = "";
@@ -292,27 +301,38 @@ public class VirtualMachine {
             
             cpu.setFHR(fileCounter++);
             rmRef.cpu.setSI(0);
+            rmRef.cpu.setMODE(0);
             returnValue = "\nFile Opened";
+            faze = 1;
+            }
         }
         else if ("CLO".equals(currentCommand.get().substring(0,3)))
         {
             rmRef.cpu.setSI(9);
+            rmRef.cpu.setMODE(1);
+
             int fhr = cpu.GetR3Value();
             MyFile file = fileHandles.get(cpu.GetR3Value());
             file.closeStreams();
             fileHandles.remove(fhr);
             returnValue = "\nFile Closed";
             rmRef.cpu.setSI(0);
+            rmRef.cpu.setMODE(0);
+
         }
         else if ("DEL".equals(currentCommand.get().substring(0,3)))
         {
             rmRef.cpu.setSI(10);
+            rmRef.cpu.setMODE(1);
             int fhr = cpu.GetR3Value();
             MyFile file = fileHandles.get(cpu.GetR3Value());
             file.deleteFile();
             fileHandles.remove(fhr);
             returnValue = "\nFile Deleted";
             rmRef.cpu.setSI(0);
+            rmRef.cpu.setMODE(0);
+
+
         }
         else if ("FHR1".equals(currentCommand.get()))
         {
@@ -325,6 +345,8 @@ public class VirtualMachine {
         else if ("RF".equals(currentCommand.get().substring(0,2)))
         {
             rmRef.cpu.setSI(7);
+                        rmRef.cpu.setMODE(1);
+
             int fhr = cpu.GetR3Value();
             MyFile file = fileHandles.get(cpu.GetR3Value());
             int x = Integer.parseInt(currentCommand.get().substring(2,3), 16);
@@ -333,7 +355,7 @@ public class VirtualMachine {
             char temp[] = new char[4];
             int j = 0;
             int i = y;
-            for(i = y; i < 16; ++i)
+            for(i = y; i < 15; ++i)
             {
                 temp = new char[4];
                 for(j = 0; j < 4; ++j)
@@ -353,7 +375,10 @@ public class VirtualMachine {
                 setWordStr(x, i, String.valueOf(temp));
 
                 if (finishedReading)
+                {
+                    cpu.setR2(1);
                     break;
+                }
             }
              if (j < 3)
                 {
@@ -363,17 +388,23 @@ public class VirtualMachine {
                 else
                 {
                     if (i%16 != 0)
-                        setWordStr(x, i+1, String.valueOf("$"));
+                        setWordStr(x, i, String.valueOf("$"));
                     else
-                        setWordStr(x+1, i, String.valueOf("$"));
+                        setWordStr(x+1, 0, String.valueOf("$"));
                 }
             //file.
+            if (!finishedReading)
+                cpu.setR2(0);
+            
             rmRef.cpu.setSI(0);
+                        rmRef.cpu.setMODE(0);
 
         }
         else if ("WF".equals(currentCommand.get().substring(0,2)))
         {
             rmRef.cpu.setSI(8);
+                        rmRef.cpu.setMODE(1);
+
             int fhr = cpu.GetR3Value();
             MyFile file = fileHandles.get(cpu.GetR3Value());
             int x = Integer.parseInt(currentCommand.get().substring(2,3), 16);
@@ -392,6 +423,8 @@ public class VirtualMachine {
 
             file.fw.append(output);
             rmRef.cpu.setSI(0);
+                        rmRef.cpu.setMODE(0);
+
    
         }
         ////////////////////////////////////////////////////////////////////////
@@ -432,6 +465,12 @@ public class VirtualMachine {
         }
         
         cpu.setIC(++currentCommandIC);
+        rmRef.cpu.setTI(rmRef.cpu.GetTIValue()-1);
+        if (rmRef.cpu.GetTIValue() == 0)
+        {
+            rmRef.cpu.setTI(10);
+        }
+        
         return returnValue;
     }
 }

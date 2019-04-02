@@ -116,7 +116,7 @@ public class RealMachine {
         cpu.setIC(0);
         cpu.setSF(0);
         cpu.setMODE(0);
-        cpu.setTI(0);
+        cpu.setTI(10);
         cpu.setSI(0);
         cpu.setPI(0);
         cpu.setCH1(0);
